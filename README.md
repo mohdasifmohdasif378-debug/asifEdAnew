@@ -1,20 +1,22 @@
-# AsifEdA AI — Smart Exam Preparation Platform
-An AI-powered educational platform for competitive exam preparation (UPSC, SSC, NDA, NEET, JEE, JKSSB). Features secure JWT auth, local/cloud AI chat, responsive design, and 100% privacy.
+# AsifEdA AI — Competitive Exam Preparation Brain
+An AI-powered educational platform for competitive exam preparation (UPSC, SSC, NDA, Banking, etc). Features secure JWT auth, AI-powered chat, responsive design, and 100% privacy.
 
 ## Features
+✅ **Competitive Exam Brain** — UPSC, SSC, NDA, Banking exam preparation  
 ✅ **Secure Authentication** — JWT tokens + bcrypt password hashing  
-✅ **Smart Chat** — Optional Anthropic Claude AI, or local code-analysis fallback  
+✅ **Smart Chat** — Claude Haiku AI + local intelligent fallback  
 ✅ **Responsive UI** — Works on mobile, tablet, desktop  
 ✅ **Docker Ready** — One-command deployment  
-✅ **Privacy First** — API keys stay on your server, never leave  
-✅ **Rate Limited** — Built-in protection against abuse  
-✅ **Production Ready** — CORS, input validation, error handling  
+✅ **Privacy First** — API keys stay on your server  
+✅ **100% Public Access** — Ports 3001 (frontend) & 8001 (backend) exposed  
+✅ **Production Ready** — CORS, validation, error handling  
 
 ## Quick Start (Local Development)
 
 ### Prerequisites
 - **Docker** & **Docker Compose** installed
 - **Git** to clone the repo
+- (Optional) **Anthropic API Key** for full AI power
 
 ### Setup
 ```bash
@@ -25,20 +27,24 @@ cd asifEdAnew
 # Copy environment template
 cp .env.example .env
 
-# Start the app (builds & runs in one command)
-docker compose up --build
+# Edit .env with your API key (optional but recommended)
+# ANTHROPIC_API_KEY=sk-ant-your-key-here
+
+# Start the app (one command!)
+docker-compose up -d
 
 # Visit the app
-open http://localhost:3000
-# or: http://127.0.0.1:3000
+open http://localhost:3001
 ```
 
 ### First Time Use
-1. **Register** — create a new account (username + password)
-2. **Login** — enter credentials
-3. **Chat** — ask questions about the codebase or AI features
-   - Without `ANTHROPIC_API_KEY`: local code-analysis assistant (studies your project)
-   - With `ANTHROPIC_API_KEY`: uses Anthropic Claude for smarter answers
+1. **Register** — create a new account
+2. **Login** — enter credentials  
+3. **Chat** — ask about:
+   - 📚 **UPSC** — History, Geography, Economy, Constitution
+   - 📖 **SSC** — English, Maths, Reasoning, General Awareness
+   - 🪖 **NDA** — General Knowledge, Maths, Military
+   - 💼 **Banking** — IBPS, SBI, RBI, Financial Awareness
 
 ## Configuration
 
@@ -46,7 +52,13 @@ Edit `.env` to customize:
 
 ```bash
 # Generate a secure SECRET_KEY (Linux/Mac):
-openssl rand -hex 16
+openssl rand -hex 32
+
+# Set your Anthropic API key (optional):
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+
+# Update CORS origins (already set for 3001 & 8001):
+FRONTEND_ORIGINS=http://localhost:3001,http://127.0.0.1:3001,http://localhost:8001,http://127.0.0.1:8001
 
 # Add your Anthropic key (optional)
 ANTHROPIC_API_KEY=sk-ant-...

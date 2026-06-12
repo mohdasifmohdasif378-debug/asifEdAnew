@@ -8,20 +8,31 @@ services:
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - DATABASE_URL=sqlite:///./data/asifeda.db
+      - FRONTEND_ORIGINS=http://localhost:3001,http://127.0.0.1:3001,http://0.0.0.0:3001,http://0.0.0.0:8001
     volumes:
       - backend_data:/app/data
     ports:
-      - "8000:8000"
+      - "8001:8000"
     restart: unless-stopped
+    networks:
+      - asifeda-network
 
   frontend:
     build: ./frontend
     container_name: asifeda-frontend
     ports:
-      - "3000:80"
+      - "3001:80"
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - asifeda-network
+    environment:
+      - API_BASE=http://localhost:8001/api
 
 volumes:
   backend_data:
+
+networks:
+  asifeda-network:
+    driver: bridge
