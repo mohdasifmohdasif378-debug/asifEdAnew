@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from app.auth import get_current_user
 from app.models import User
 from app.schemas import ChatRequest, ChatResponse, ErrorResponse
 from app.config import settings
 import anthropic
+from app.limiter import limiter
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -28,7 +29,8 @@ KNOWLEDGE_BASE = {
 }
 
 @router.post("", response_model=ChatResponse, responses={400: {"model": ErrorResponse}, 401: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
-async def chat(request: ChatRequest, current_user: User = Depends(get_current_user)):
+@limiter.limit("10/minute")
+async def chat(req: Request, request: ChatRequest, current_user: User = Depends(get_current_user)):
     if not request.message.strip():
         raise HTTPException(400, detail="Message cannot be empty")
     

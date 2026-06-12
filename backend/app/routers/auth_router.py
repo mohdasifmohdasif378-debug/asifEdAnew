@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
 from app.schemas import UserRegister, UserLogin, Token, ErrorResponse
 from app.auth import hash_password, authenticate_user, create_access_token, get_current_user
+from app.limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=Token, responses={400: {"model": ErrorResponse}, 422: {"model": ErrorResponse}})
-def register(user_data: UserRegister, db: Session = Depends(get_db)):
+@limiter.limit("2/minute")
+def register(request: Request, user_data: UserRegister, db: Session = Depends(get_db)):
     """Register a new user. Username must be 3-50 alphanumeric chars, password 4-100 chars."""
     existing = db.query(User).filter(User.username == user_data.username).first()
     if existing:
@@ -24,7 +26,8 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
         raise HTTPException(500, detail="Registration failed")
 
 @router.post("/login", response_model=Token, responses={401: {"model": ErrorResponse}})
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("6/minute")
+def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
     """Login with username and password to get JWT token."""
     user = authenticate_user(db, user_data.username.lower(), user_data.password)
     if not user:

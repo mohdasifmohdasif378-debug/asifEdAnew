@@ -9,9 +9,18 @@ from app.models import Base
 from app.routers import auth_router, chat_router, notes_router, content_router
 from datetime import datetime
 import time
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.errors import RateLimitExceeded
+from app.limiter import limiter
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
+
+# Attach rate limiter
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 # Security Middleware Stack
 # 1. HTTPS Redirect (production only)
