@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from app.config import settings
 from app.database import engine
 from app.models import Base
-from app.routers import auth_router, chat_router, notes_router, content_router
+from app.routers import auth_router, chat_router
 from datetime import datetime
 import time
 
@@ -30,7 +30,7 @@ app.add_middleware(
     CORSMiddleware, 
     allow_origins=allowed or ["http://localhost:3001"],
     allow_credentials=True, 
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "Authorization"]
 )
 
@@ -63,11 +63,8 @@ async def log_requests(request: Request, call_next):
     print(f"{datetime.utcnow().isoformat()} {request.method} {request.url.path} {response.status_code} {duration:.2f}s")
     return response
 
-# Include all routers
 app.include_router(auth_router.router, prefix="/api")
 app.include_router(chat_router.router, prefix="/api")
-app.include_router(notes_router.router, prefix="/api")
-app.include_router(content_router.router, prefix="/api")
 
 @app.get("/")
 def root(): 

@@ -55,29 +55,47 @@ docker-compose up -d
 
 ---
 
-## 📱 Access from External Devices
+## 🌐 Access Your Application (Secure Methods)
 
-### On Same Network:
+### ✅ Local Access (Safest & Recommended)
 ```
-Frontend: http://<YOUR_COMPUTER_IP>:3001
-Backend:  http://<YOUR_COMPUTER_IP>:8001/api
+Frontend: http://localhost:3001
+Backend:  http://localhost:8001/api
+Health:   http://localhost:8001/api/health
 ```
 
-**Find your IP:**
+### ⚠️ Remote Access (Use Secure Methods ONLY)
+
+**DO NOT expose ports directly to the internet!**
+
+**Option 1: SSH Tunneling (Most Secure)**
 ```bash
-hostname -I
+# From your remote machine
+ssh -L 3001:localhost:3001 -L 8001:localhost:8001 user@your-server.com
+# Then access: http://localhost:3001
 ```
 
-### On Different Network (Cloud/Server):
-```
-Frontend: http://<SERVER_PUBLIC_IP>:3001
-Backend:  http://<SERVER_PUBLIC_IP>:8001
-```
+**Option 2: VPN Access**
+- Set up OpenVPN or WireGuard on your server
+- Connect to VPN from remote machine
+- Access via localhost:3001 over encrypted tunnel
 
-**Requirements:**
-1. Firewall allows ports 3001 & 8001
-2. Docker containers running
-3. Network connectivity established
+**Option 3: Reverse Proxy with HTTPS (Production)**
+- Deploy Nginx/Apache with SSL certificates
+- Proxy to internal ports 3001/8001
+- Enable only HTTPS (port 443)
+
+**Option 4: Cloudflare Tunnel (Zero Trust)**
+- Free service, no port exposure needed
+- Automatic HTTPS encryption
+- Best for production
+
+**NEVER:**
+- ❌ Port forward directly to the internet
+- ❌ Share your IP publicly
+- ❌ Use HTTP without encryption for remote access
+- ❌ Expose database ports externally
+- ❌ Use default passwords
 
 ---
 
